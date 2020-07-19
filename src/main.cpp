@@ -56,7 +56,7 @@ void beep_stop();
 Ticker timerDisplay(drawDisplay2, 300); // draw data to display
 Ticker timerRequestTempereture(getTemp, 200,1); // req temp from sensors
 Ticker timerSetTemp(setTemp,750/ (1 << (12-TEMP_RESOLUTION)),1,MILLIS);//set temp
-Ticker timerLed(displayLed, 50); // led neopixel
+// Ticker timerLed(displayLed, 50); // led neopixel
 Ticker timerBepp(beep_stop,1,1); // beep stop
 
 void beep_stop(){
@@ -77,8 +77,12 @@ void setup() {
 
 // Default INA226 address is 0x40
   ina.begin();
+  // ina.configure(INA226_AVERAGES_1, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
   ina.configure(INA226_AVERAGES_256, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
-  ina.calibrate(0.022/2, 10);  // Calibrate INA226. Rshunt = 0.01 ohm, Max excepted current = 4A
+
+// float shunt=0.022/2;
+float shunt=0.5012*0.11/3.912;
+  ina.calibrate(shunt, 10);  // Calibrate INA226. Rshunt = 0.01 ohm, Max excepted current = 4A    3.15 0.022/2  => 7.40 X ===> X=7.40*0.022/3.15 
 
    //tempereture sensors
   sensors.setResolution(TEMP_RESOLUTION);
@@ -87,8 +91,8 @@ void setup() {
 
   //neopixels
     pinMode(LED_BUILTIN, OUTPUT);
-    strip.begin();
-    strip.setBrightness(100);
+    // strip.begin();
+    // strip.setBrightness(100);
 
 //display
     u8g2.setBusClock(400000);//more fps https://www.seeedstudio.com/blog/2019/07/05/u8g2-for-seeeduino-boards/
@@ -96,7 +100,7 @@ void setup() {
 
     timerDisplay.start();
     timerRequestTempereture.resume();
-    timerLed.start();
+    // timerLed.start();
 
     beep(5000);
 }//setup
@@ -185,7 +189,7 @@ void loop() {
   timerDisplay.update();
   timerRequestTempereture.update();
   timerSetTemp.update();
-  timerLed.update();
+  // timerLed.update();
   timerBepp.update();
 }//loop
 
