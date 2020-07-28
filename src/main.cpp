@@ -16,9 +16,12 @@
 //D8 =>pin 11 - buzzer
 // led  => 13
 #define PIN_BUZZER 11//15
+#define PIN_SAFE 7// pin to controll output
 
 //maximum tempereture then beep
-#define MAX_TEMP 80
+#define MAX_TEMP 90//80 maximum allowd temperature
+#define MAX_TEMP_LOW 60//60 enable output then temp has down to XX C
+boolean over_heat=false;
 
 // Data wire is plugged into port 2 on the Arduino
 #define TEMP_RESOLUTION 9//temp resolution
@@ -73,6 +76,7 @@ void beep(int ms=1000){
 // the setup function runs once when you press reset or power the board
 void setup() {
   pinMode(PIN_BUZZER, OUTPUT);
+  pinMode(PIN_SAFE, OUTPUT);
    Serial.begin(115200);
 
 // Default INA226 address is 0x40
@@ -103,6 +107,7 @@ float shunt=0.5012*0.11/3.912;
     // timerLed.start();
 
     beep(5000);
+    digitalWrite(PIN_SAFE,HIGH);
 }//setup
 
 //neopixels Fill the dots one after the other with a color
@@ -128,9 +133,18 @@ void setTemp(){
 
   if(temp1>MAX_TEMP||temp2>MAX_TEMP||temp3>MAX_TEMP){
     digitalWrite(PIN_BUZZER,HIGH);
+    digitalWrite(PIN_SAFE,LOW);
+    over_heat=true;
   }else{
     digitalWrite(PIN_BUZZER,LOW);
   }
+  if(over_heat){
+    if(temp1<=MAX_TEMP_LOW&&temp2<=MAX_TEMP_LOW&&temp3<=MAX_TEMP_LOW){
+      digitalWrite(PIN_SAFE,HIGH);
+      over_heat=false;
+    }
+  }//if overheat
+
   timerRequestTempereture.start();
 }//setTemp
 
@@ -158,6 +172,7 @@ void drawDisplay2(){
     
     u8g2.setFont(u8g2_font_5x7_tf);//6px font  u8g2_font_5x7_tf
     u8g2.drawStr(ALIGN_RIGHT(str_temp.c_str()),64,str_temp.c_str());
+    if(over_heat){u8g2.drawStr(0,64,"cooling...");}
    } while ( u8g2.nextPage() );
 }//drawDisplay
 
