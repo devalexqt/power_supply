@@ -19,7 +19,7 @@
 #define PIN_SAFE 7// pin to controll output
 
 //maximum tempereture then beep
-#define MAX_TEMP 90//80 maximum allowd temperature
+#define MAX_TEMP 70//80 maximum allowd temperature
 #define MAX_TEMP_LOW 60//60 enable output then temp has down to XX C
 boolean over_heat=false;
 
