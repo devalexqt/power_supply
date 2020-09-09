@@ -85,7 +85,9 @@ void setup() {
   ina.configure(INA226_AVERAGES_256, INA226_BUS_CONV_TIME_1100US, INA226_SHUNT_CONV_TIME_1100US, INA226_MODE_SHUNT_BUS_CONT);
 
 // float shunt=0.022/2;
-float shunt=0.5012*0.11/3.912;
+float shunt=0.22/(3*18.18);//0.5012*0.11/3.912;
+//0.165 => 3
+
   ina.calibrate(shunt, 10);  // Calibrate INA226. Rshunt = 0.01 ohm, Max excepted current = 4A    3.15 0.022/2  => 7.40 X ===> X=7.40*0.022/3.15 
 
    //tempereture sensors
